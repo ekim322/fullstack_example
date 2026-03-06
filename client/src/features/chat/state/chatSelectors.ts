@@ -5,7 +5,7 @@ export function isSessionActive(status: SessionStatus): boolean {
 }
 
 export function canStopSession(status: SessionStatus): boolean {
-  return isSessionActive(status);
+  return status === "running";
 }
 
 export function hasActiveAssistantStream(entries: StreamLogEntry[]): boolean {

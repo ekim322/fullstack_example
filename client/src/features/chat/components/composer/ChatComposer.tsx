@@ -52,6 +52,10 @@ export function ChatComposer({
       return;
     }
 
+    if (status === "awaiting_confirmation") {
+      return;
+    }
+
     if (canStopSession(status)) {
       return;
     }

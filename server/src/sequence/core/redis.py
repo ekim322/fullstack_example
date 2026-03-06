@@ -1,5 +1,6 @@
 import logging
 import asyncio
+import uuid
 from typing import Any
 
 from redis.asyncio import Redis, ConnectionPool
@@ -76,17 +77,29 @@ class RedisClient:
         ttl: int = 5,
         retry_interval: float = 0.1,
         max_retries: int = 30,
-    ) -> bool:
-        """Try to acquire a simple Redis lock using SET NX."""
+    ) -> str | None:
+        """Acquire a lock using SET NX and return the ownership token."""
         for _ in range(max_retries):
-            acquired = await self._redis.set(key, "1", nx=True, ex=ttl)
+            token = uuid.uuid4().hex
+            acquired = await self._redis.set(key, token, nx=True, ex=ttl)
             if acquired:
-                return True
+                return token
             await asyncio.sleep(retry_interval)
-        return False
+        return None
 
-    async def release_lock(self, key: str) -> None:
-        await self._redis.delete(key)
+    async def release_lock(self, key: str, token: str | None = None) -> None:
+        if token is None:
+            await self._redis.delete(key)
+            return
+
+        # Only the owner that set the token can release the lock.
+        script = """
+        if redis.call("GET", KEYS[1]) == ARGV[1] then
+            return redis.call("DEL", KEYS[1])
+        end
+        return 0
+        """
+        await self._redis.eval(script, 1, key, token)
 
     async def flush_all(self) -> None:
         """Delete all keys in the current Redis database. Use with caution."""

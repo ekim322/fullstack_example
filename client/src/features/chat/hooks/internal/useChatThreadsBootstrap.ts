@@ -1,15 +1,15 @@
 import { useEffect, type Dispatch, type MutableRefObject, type SetStateAction } from "react";
 
 import { getUserThreads } from "../../api/chatApi";
-import { initialChatState, type ChatAction } from "../../state/chatReducer";
+import { initialChatState } from "../../state/chatReducer";
 import {
   mergeServerThreadsIntoStore,
+  updateActiveSessionState,
   type PersistedStore,
 } from "../../state/chatPersistence";
 
 type UseChatThreadsBootstrapArgs = {
   authToken: string;
-  dispatch: Dispatch<ChatAction>;
   sessionStoreRef: MutableRefObject<PersistedStore>;
   setSessionStore: Dispatch<SetStateAction<PersistedStore>>;
   syncAndReconnectSession: (candidate: PersistedStore["sessions"][string]["state"]) => Promise<void>;
@@ -17,7 +17,6 @@ type UseChatThreadsBootstrapArgs = {
 
 export function useChatThreadsBootstrap({
   authToken,
-  dispatch,
   sessionStoreRef,
   setSessionStore,
   syncAndReconnectSession,
@@ -41,7 +40,6 @@ export function useChatThreadsBootstrap({
         setSessionStore(nextStore);
         const active = nextStore.sessions[nextStore.activeSessionId];
         if (active) {
-          dispatch({ type: "hydrate", state: active.state });
           await syncAndReconnectSession(active.state);
         }
       } catch (error) {
@@ -49,12 +47,28 @@ export function useChatThreadsBootstrap({
           return;
         }
         const detail = error instanceof Error ? error.message : "Unable to load chat history";
-        dispatch({ type: "setError", error: detail });
+        setSessionStore((current) => {
+          const activeSession = current.sessions[current.activeSessionId];
+          if (!activeSession) {
+            return current;
+          }
+
+          return updateActiveSessionState(
+            current,
+            {
+              ...activeSession.state,
+              status: "error",
+              activeConfig: null,
+              error: detail,
+            },
+            current.activeSessionId,
+          );
+        });
       }
     })();
 
     return () => {
       cancelled = true;
     };
-  }, [authToken, dispatch, sessionStoreRef, setSessionStore, syncAndReconnectSession]);
+  }, [authToken, sessionStoreRef, setSessionStore, syncAndReconnectSession]);
 }

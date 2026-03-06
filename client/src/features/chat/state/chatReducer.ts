@@ -329,6 +329,7 @@ export function chatReducer(state: ChatState, action: Action): ChatState {
       return {
         ...state,
         status: "running",
+        sessionId: null,
         draft: "",
         error: null,
         lastEventId: "0-0",
@@ -341,6 +342,14 @@ export function chatReducer(state: ChatState, action: Action): ChatState {
       };
 
     case "sessionStarted":
+      if (state.status !== "running") {
+        return state;
+      }
+
+      if (state.threadId && state.threadId !== action.threadId) {
+        return state;
+      }
+
       return {
         ...state,
         threadId: action.threadId,
@@ -351,6 +360,10 @@ export function chatReducer(state: ChatState, action: Action): ChatState {
       };
 
     case "sessionStopped":
+      if (state.status !== "running") {
+        return state;
+      }
+
       return {
         ...state,
         status: "complete",

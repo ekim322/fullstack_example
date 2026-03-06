@@ -14,6 +14,7 @@ from sequence.models.chat import (
     ThreadOpenStateResponse,
     ThreadStatusResponse,
 )
+from sequence.services.chat_service import StopSessionOutcome
 
 router = APIRouter(prefix="/chat", tags=["chat"])
 
@@ -121,7 +122,9 @@ async def get_thread_status(thread_id: str, service: ChatServiceDep, user_id: Au
 
 @router.post("/{thread_id}/stop")
 async def stop_session(thread_id: str, service: ChatServiceDep, user_id: AuthenticatedUserDep):
-    stopped = await service.stop_session(thread_id, user_id=user_id)
-    if not stopped:
-        raise HTTPException(404, "Active session not found for thread")
-    return {"status": "stopped"}
+    result = await service.stop_session(thread_id, user_id=user_id)
+    if result in (StopSessionOutcome.THREAD_NOT_FOUND, StopSessionOutcome.FORBIDDEN):
+        raise HTTPException(404, "Thread not found")
+    if result == StopSessionOutcome.STOPPED:
+        return {"status": "stopped"}
+    return {"status": "already_stopped"}

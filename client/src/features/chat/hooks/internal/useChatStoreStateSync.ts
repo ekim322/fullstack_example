@@ -26,6 +26,7 @@ export function useChatStoreStateSync({
 }: UseChatStoreStateSyncArgs): void {
   const stateSyncTimerRef = useRef<number | null>(null);
   const latestStateRef = useRef<ChatState>(state);
+  const latestSessionIdRef = useRef<string>(sessionStore.activeSessionId);
 
   const flushLatestStateToStore = useCallback(() => {
     if (stateSyncTimerRef.current !== null) {
@@ -34,7 +35,8 @@ export function useChatStoreStateSync({
     }
 
     const latestState = latestStateRef.current;
-    setSessionStore((current) => updateActiveSessionState(current, latestState));
+    const latestSessionId = latestSessionIdRef.current;
+    setSessionStore((current) => updateActiveSessionState(current, latestState, latestSessionId));
   }, [setSessionStore]);
 
   useEffect(() => {
@@ -53,6 +55,7 @@ export function useChatStoreStateSync({
 
   useEffect(() => {
     latestStateRef.current = state;
+    latestSessionIdRef.current = sessionStore.activeSessionId;
 
     if (isRunningSessionStatus(state.status)) {
       if (stateSyncTimerRef.current === null) {

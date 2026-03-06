@@ -144,6 +144,46 @@ export function openSessionEventStream(
         }
       }
 
+      buffer += decoder.decode();
+      if (buffer.length > 0) {
+        const trailingLines = buffer.split(/\r?\n/);
+        trailingLines.forEach((line) => {
+          if (!line) {
+            const didDispatch = dispatchPendingEvent(pending, handlers);
+            pending = createPendingEvent();
+            if (!didDispatch) {
+              closed = true;
+            }
+            return;
+          }
+
+          if (line.startsWith(":")) {
+            return;
+          }
+
+          const separatorIndex = line.indexOf(":");
+          const fieldName = separatorIndex === -1
+            ? line
+            : line.slice(0, separatorIndex);
+          const rawValue = separatorIndex === -1
+            ? ""
+            : line.slice(separatorIndex + 1);
+          const valueText = rawValue.startsWith(" ")
+            ? rawValue.slice(1)
+            : rawValue;
+
+          applySseField(fieldName, valueText, pending);
+        });
+      }
+
+      if (!closed && pending.data.length > 0) {
+        const didDispatch = dispatchPendingEvent(pending, handlers);
+        pending = createPendingEvent();
+        if (!didDispatch || closed) {
+          return;
+        }
+      }
+
       if (!closed) {
         handlers.onError();
       }

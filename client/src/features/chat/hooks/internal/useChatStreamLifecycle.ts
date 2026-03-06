@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef, type Dispatch, type MutableRefObject } 
 import { stopChatSession } from "../../api/chatApi";
 import { openSessionEventStream } from "../../api/sse";
 import type { ChatAction } from "../../state/chatReducer";
-import { isRunningSessionStatus, isSessionActiveStatus } from "../../state/sessionStatus";
+import { isRunningSessionStatus } from "../../state/sessionStatus";
 import type { ChatState, StreamEvent, ToolCallStreamEvent, ToolResultStreamEvent } from "../../types";
 import { subscribeToInvalidSession } from "../../../../shared/sessionInvalidation";
 import { syncSessionStatus } from "./syncSessionStatus";
@@ -26,7 +26,7 @@ type UseChatStreamLifecycleResult = {
   connectToSession: (sessionId: string, lastId: string) => void;
   syncAndReconnectSession: (candidate: ChatState) => Promise<void>;
   resetReconnectAttempts: () => void;
-  stopSession: () => Promise<void>;
+  stopSession: () => Promise<boolean>;
 };
 
 export function useChatStreamLifecycle({
@@ -44,6 +44,7 @@ export function useChatStreamLifecycle({
   const pendingStreamEntriesRef = useRef<StreamBatchEntry[]>([]);
   const flushRafRef = useRef<number | null>(null);
   const flushTimeoutRef = useRef<number | null>(null);
+  const stopRequestRef = useRef<Promise<boolean> | null>(null);
 
   const clearFlushSchedulers = useCallback(() => {
     if (flushRafRef.current !== null) {
@@ -177,6 +178,14 @@ export function useChatStreamLifecycle({
               dispatch,
               connectToSession,
               onInvalidSession: handleInvalidSession,
+              shouldApply: () => {
+                const latest = stateRef.current;
+                return (
+                  streamGenerationRef.current === reconnectGeneration &&
+                  latest.threadId === current.threadId &&
+                  isRunningSessionStatus(latest.status)
+                );
+              },
             });
           }, delayMs);
         },
@@ -191,8 +200,10 @@ export function useChatStreamLifecycle({
         return;
       }
 
+      const targetThreadId = candidate.threadId;
+      const generation = streamGenerationRef.current;
       await syncSessionStatus({
-        threadId: candidate.threadId,
+        threadId: targetThreadId,
         authToken,
         status: candidate.status,
         fallbackSessionId: candidate.sessionId,
@@ -200,6 +211,7 @@ export function useChatStreamLifecycle({
         dispatch,
         connectToSession,
         onInvalidSession: handleInvalidSession,
+        shouldApply: () => streamGenerationRef.current === generation,
       });
     },
     [authToken, connectToSession, dispatch, handleInvalidSession],
@@ -229,6 +241,7 @@ export function useChatStreamLifecycle({
       return;
     }
     const threadId = snapshot.threadId;
+    const generation = streamGenerationRef.current;
     void (async () => {
       await syncSessionStatus({
         threadId,
@@ -239,6 +252,7 @@ export function useChatStreamLifecycle({
         dispatch,
         connectToSession,
         onInvalidSession: handleInvalidSession,
+        shouldApply: () => streamGenerationRef.current === generation,
       });
     })();
   }, [authToken, connectToSession, dispatch, handleInvalidSession, stateRef]);
@@ -248,19 +262,53 @@ export function useChatStreamLifecycle({
   }, []);
 
   const stopSession = useCallback(async () => {
-    const snapshot = stateRef.current;
-    if (!snapshot.threadId || !isSessionActiveStatus(snapshot.status)) {
-      return;
+    if (stopRequestRef.current) {
+      return stopRequestRef.current;
     }
 
+    const request = (async (): Promise<boolean> => {
+      const snapshot = stateRef.current;
+      if (!isRunningSessionStatus(snapshot.status)) {
+        return true;
+      }
+
+      if (!snapshot.threadId) {
+        flushPendingEntries();
+        closeStream();
+        dispatch({ type: "sessionStopped" });
+        return true;
+      }
+
+      try {
+        await stopChatSession(snapshot.threadId, authToken);
+
+        if (stateRef.current.threadId !== snapshot.threadId) {
+          return true;
+        }
+
+        flushPendingEntries();
+        closeStream();
+        dispatch({ type: "sessionStopped" });
+        return true;
+      } catch (error) {
+        if (stateRef.current.threadId !== snapshot.threadId) {
+          return false;
+        }
+
+        const detail = error instanceof Error ? error.message : "Unable to stop session";
+        dispatch({ type: "setError", error: detail });
+        return false;
+      }
+    })();
+
+    stopRequestRef.current = request;
+
     try {
-      await stopChatSession(snapshot.threadId, authToken);
-      flushPendingEntries();
-      closeStream();
-      dispatch({ type: "sessionStopped" });
-    } catch (error) {
-      const detail = error instanceof Error ? error.message : "Unable to stop session";
-      dispatch({ type: "setError", error: detail });
+      return await request;
+    } finally {
+      if (stopRequestRef.current === request) {
+        stopRequestRef.current = null;
+      }
     }
   }, [authToken, closeStream, dispatch, flushPendingEntries, stateRef]);
 

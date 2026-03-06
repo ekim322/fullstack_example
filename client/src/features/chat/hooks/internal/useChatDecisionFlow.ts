@@ -10,7 +10,9 @@ type UseChatDecisionFlowArgs = {
   state: ChatState;
   stateRef: MutableRefObject<ChatState>;
   dispatch: Dispatch<ChatAction>;
-  connectToSession: (sessionId: string, lastId: string) => void;
+  getActiveLocalSessionId: () => string;
+  onSessionStarted: (localSessionId: string, threadId: string, sessionId: string) => void;
+  onSessionError: (localSessionId: string, error: string) => void;
 };
 
 type UseChatDecisionFlowResult = {
@@ -25,7 +27,9 @@ export function useChatDecisionFlow({
   state,
   stateRef,
   dispatch,
-  connectToSession,
+  getActiveLocalSessionId,
+  onSessionStarted,
+  onSessionError,
 }: UseChatDecisionFlowArgs): UseChatDecisionFlowResult {
   const decisionInteractionRef = useRef(false);
 
@@ -33,6 +37,8 @@ export function useChatDecisionFlow({
     if (!snapshot.threadId || snapshot.status !== "awaiting_confirmation") {
       return;
     }
+
+    const originLocalSessionId = getActiveLocalSessionId();
 
     decisionInteractionRef.current = false;
     dispatch({ type: "confirmStarted" });
@@ -44,14 +50,13 @@ export function useChatDecisionFlow({
         confirmations: snapshot.decisionByCallId,
       }, authToken);
 
-      dispatch({ type: "sessionStarted", threadId: response.thread_id, sessionId: response.session_id });
-      connectToSession(response.session_id, "0-0");
+      onSessionStarted(originLocalSessionId, response.thread_id, response.session_id);
     } catch (error) {
       const detail = error instanceof Error ? error.message : "Unable to continue session";
-      dispatch({ type: "setError", error: detail });
+      onSessionError(originLocalSessionId, detail);
       throw error;
     }
-  }, [authToken, connectToSession, dispatch, userId]);
+  }, [authToken, dispatch, getActiveLocalSessionId, onSessionError, onSessionStarted, userId]);
 
   const submitPendingDecisions = useCallback(async () => {
     const snapshot = stateRef.current;
@@ -97,4 +102,3 @@ export function useChatDecisionFlow({
     setDecision,
   };
 }
-

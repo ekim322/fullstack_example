@@ -37,6 +37,8 @@ export function ChatControls({
   onSend,
   onStop,
 }: ChatControlsProps) {
+  const awaitingConfirmation = status === "awaiting_confirmation";
+
   return (
     <div className={styles.controls}>
       <div className={styles.leftControls}>
@@ -118,9 +120,13 @@ export function ChatControls({
           type="button"
           className={styles.sendButton}
           onClick={onSend}
-          disabled={sendDisabled}
+          disabled={sendDisabled || awaitingConfirmation}
           aria-label="Send Message"
-          title="Send Message (Enter)"
+          title={
+            awaitingConfirmation
+              ? "Approve or decline pending tools before sending a new message"
+              : "Send Message (Enter)"
+          }
         >
           <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path

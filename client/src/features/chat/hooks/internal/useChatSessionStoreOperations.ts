@@ -7,7 +7,7 @@ import {
 } from "react";
 
 import { setThreadOpenState } from "../../api/chatApi";
-import { initialChatState, type ChatAction } from "../../state/chatReducer";
+import { initialChatState } from "../../state/chatReducer";
 import {
   createSessionRecord,
   makeLocalSessionId,
@@ -15,14 +15,10 @@ import {
   type PersistedStore,
 } from "../../state/chatPersistence";
 import type { ChatState } from "../../types";
-import { useChatStoreStateSync } from "./useChatStoreStateSync";
 import { useChatThreadsBootstrap } from "./useChatThreadsBootstrap";
 
 type UseChatSessionStoreOperationsArgs = {
   authToken: string;
-  storageKey: string;
-  state: ChatState;
-  dispatch: Dispatch<ChatAction>;
   sessionStore: PersistedStore;
   setSessionStore: Dispatch<SetStateAction<PersistedStore>>;
   sessionStoreRef: MutableRefObject<PersistedStore>;
@@ -43,9 +39,6 @@ type UseChatSessionStoreOperationsResult = {
 
 export function useChatSessionStoreOperations({
   authToken,
-  storageKey,
-  state,
-  dispatch,
   sessionStore,
   setSessionStore,
   sessionStoreRef,
@@ -60,16 +53,8 @@ export function useChatSessionStoreOperations({
     resetAskUserQuestionFlow();
   }, [closeStream, resetAskUserQuestionFlow, resetReconnectAttempts]);
 
-  useChatStoreStateSync({
-    state,
-    sessionStore,
-    storageKey,
-    setSessionStore,
-  });
-
   useChatThreadsBootstrap({
     authToken,
-    dispatch,
     sessionStoreRef,
     setSessionStore,
     syncAndReconnectSession,
@@ -108,10 +93,9 @@ export function useChatSessionStoreOperations({
         };
       });
 
-      dispatch({ type: "hydrate", state: target.state });
       void syncAndReconnectSession(target.state);
     },
-    [dispatch, resetSessionInteractionState, sessionStoreRef, setSessionStore, syncAndReconnectSession],
+    [resetSessionInteractionState, sessionStoreRef, setSessionStore, syncAndReconnectSession],
   );
 
   const startNewSession = useCallback(() => {
@@ -129,9 +113,7 @@ export function useChatSessionStoreOperations({
         [id]: session,
       },
     }));
-
-    dispatch({ type: "hydrate", state: session.state });
-  }, [dispatch, resetSessionInteractionState, setSessionStore]);
+  }, [resetSessionInteractionState, setSessionStore]);
 
   const openSessionTab = useCallback(
     (sessionId: string) => {

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import enum
 import logging
 import uuid
 from collections.abc import AsyncGenerator
@@ -23,6 +24,13 @@ _SSE_BLOCK_MS = 1_000
 _SSE_READ_COUNT = 10
 _MAX_EMPTY_CYCLES = 120
 _LOCK_TTL = 5
+
+
+class StopSessionOutcome(str, enum.Enum):
+    STOPPED = "stopped"
+    ALREADY_STOPPED = "already_stopped"
+    THREAD_NOT_FOUND = "thread_not_found"
+    FORBIDDEN = "forbidden"
 
 
 class ChatService:
@@ -265,7 +273,8 @@ class ChatService:
             thread_id = uuid.uuid4().hex
 
         lock_key = self._thread_lock_key(thread_id)
-        if not await self.redis.acquire_lock(lock_key, ttl=_LOCK_TTL):
+        lock_token = await self.redis.acquire_lock(lock_key, ttl=_LOCK_TTL)
+        if not lock_token:
             raise ValueError("Thread is busy — try again shortly")
 
         try:
@@ -321,7 +330,7 @@ class ChatService:
             )
 
         finally:
-            await self.redis.release_lock(lock_key)
+            await self.redis.release_lock(lock_key, token=lock_token)
 
         await self.redis.set(self._session_thread_key(session_id), thread_id, ttl=_SESSION_STREAM_TTL)
         await self.redis.raw.expire(self._session_stream_key(session_id), _SESSION_STREAM_TTL)
@@ -384,35 +393,38 @@ class ChatService:
 
         return await self.chat_db.get_thread_status(thread_id)
 
-    async def stop_session(self, thread_id: str, user_id: str | None = None) -> bool:
+    async def stop_session(self, thread_id: str, user_id: str | None = None) -> StopSessionOutcome:
         """Cancel the running task for this thread.
 
         The CancelledError handler in _run_session_loop takes care of saving
         the partial conversation and emitting a DONE event to the stream.
         """
         if user_id is None or not user_id.strip():
-            return False
+            return StopSessionOutcome.FORBIDDEN
         if not await self._can_access_thread(thread_id, user_id):
-            return False
+            return StopSessionOutcome.FORBIDDEN
 
         thread_status = await self.chat_db.get_thread_status(thread_id)
         if not thread_status:
-            return False
+            return StopSessionOutcome.THREAD_NOT_FOUND
+
+        if thread_status.get("status") != "running":
+            return StopSessionOutcome.ALREADY_STOPPED
 
         session_id = thread_status.get("current_session_id")
         if not isinstance(session_id, str) or not session_id:
-            return False
+            return StopSessionOutcome.ALREADY_STOPPED
 
         task = self._tasks.get(session_id)
-        if not task:
-            return False
+        if not task or task.done():
+            return StopSessionOutcome.ALREADY_STOPPED
 
         task.cancel()
         # Don't await the task here — the CancelledError handler inside
         # _run_session_loop owns saving state and emitting the DONE event.
         # Awaiting here would also risk the current request being cancelled
         # before the handler finishes.
-        return True
+        return StopSessionOutcome.STOPPED
 
     async def list_threads_for_user(
         self,

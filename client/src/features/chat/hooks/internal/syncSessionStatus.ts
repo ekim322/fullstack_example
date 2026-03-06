@@ -15,6 +15,7 @@ type SyncSessionStatusArgs = {
   dispatch: Dispatch<ChatAction>;
   connectToSession: (sessionId: string, lastId: string) => void;
   onInvalidSession: () => void;
+  shouldApply?: () => boolean;
 };
 
 export async function syncSessionStatus({
@@ -26,15 +27,27 @@ export async function syncSessionStatus({
   dispatch,
   connectToSession,
   onInvalidSession,
+  shouldApply,
 }: SyncSessionStatusArgs): Promise<void> {
   try {
     const response = await getThreadStatus(threadId, authToken);
+
+    if (shouldApply && !shouldApply()) {
+      return;
+    }
+
     dispatch({ type: "syncStatus", status: response });
 
     if (response.status === "running") {
       const resumeSessionId = response.current_session_id ?? fallbackSessionId;
       if (resumeSessionId) {
-        connectToSession(resumeSessionId, lastEventId || "0-0");
+        const resumeFromId = resumeSessionId === fallbackSessionId ? (lastEventId || "0-0") : "0-0";
+
+        if (shouldApply && !shouldApply()) {
+          return;
+        }
+
+        connectToSession(resumeSessionId, resumeFromId);
       }
     }
   } catch (error) {
@@ -44,6 +57,9 @@ export async function syncSessionStatus({
     }
 
     if (isRunningSessionStatus(status) && fallbackSessionId) {
+      if (shouldApply && !shouldApply()) {
+        return;
+      }
       connectToSession(fallbackSessionId, lastEventId || "0-0");
     }
   }

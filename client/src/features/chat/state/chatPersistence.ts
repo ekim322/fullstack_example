@@ -438,8 +438,13 @@ export function deriveSessionLabel(state: ChatState, fallback: string): string {
   return text.length > 64 ? `${text.slice(0, 64)}...` : text;
 }
 
-export function updateActiveSessionState(store: PersistedStore, state: ChatState): PersistedStore {
-  const active = store.sessions[store.activeSessionId];
+export function updateActiveSessionState(
+  store: PersistedStore,
+  state: ChatState,
+  sessionId: string | null = null,
+): PersistedStore {
+  const targetSessionId = sessionId ?? store.activeSessionId;
+  const active = store.sessions[targetSessionId];
   if (!active) {
     return store;
   }
@@ -448,7 +453,7 @@ export function updateActiveSessionState(store: PersistedStore, state: ChatState
     ...store,
     sessions: {
       ...store.sessions,
-      [store.activeSessionId]: {
+      [targetSessionId]: {
         ...active,
         state,
         label: deriveSessionLabel(state, active.label),
