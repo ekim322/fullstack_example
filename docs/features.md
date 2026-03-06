@@ -54,6 +54,9 @@ See [Tool Design](tools.md) for implementation details and [Agent System](../ser
 
 ## Auth
 
-- Username/password login, JWT token
+- Lightweight auth model: shared client password + user-provided `user_id` at login
+- Login returns a signed session token containing the `user_id` subject
+- Protected API routes derive user context from the token and enforce per-user access checks
+- Chat requests include `user_id` for consistency checks; mismatch vs token subject is rejected
 - Session stored in `sessionStorage`, validated on load
 - Global session invalidation on 401/403 — streams close, UI returns to login

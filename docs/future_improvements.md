@@ -6,15 +6,15 @@ Things I'd change to make given more time.
 
 ## Security
 
-Auth works but it's minimal. Single shared password, client picks their own `user_id` at login — anyone with the password can be anyone. The fix is per-user credentials with bcrypt so identity is server-asserted. Ideally `user_id` shouldn't appear in request bodies at all, just come from the token.
+Auth is intentionally lightweight: single shared password at login and client-selected `user_id` for session scoping. On authenticated routes, identity is enforced from the token subject and server-side ownership checks. One cleanup still worth doing is removing redundant `user_id` fields from request bodies and deriving user context exclusively from the token.
 
-The SSE endpoint takes the token as a query param (`?auth_token=`) because EventSource can't set headers. That means tokens end up in server logs, browser history, proxy logs. Better approach: client exchanges its bearer token for a one-time short-lived ticket, passes the ticket in the URL instead. Ticket expires in seconds, single use.
+Streaming uses authenticated fetch with bearer headers, which avoids putting tokens in URLs on the normal path. But the backend still accepts `?auth_token=` and there is no one-time ticket flow. Better approach is still: client exchanges bearer token for a one-time short-lived ticket, passes the ticket in the URL only where URL transport is unavoidable, ticket expires in seconds and is single-use.
 
 No token refresh or revocation — once issued, a token is valid for 12 hours with no way to kill it early. Needs a refresh flow and a Redis-backed revocation list.
 
 CORS is wide open — `allow_origins=["*"]` with `allow_credentials=True` in `main.py`. That's a known bad combo. Lock to actual frontend origin.
 
-Other missing pieces: rate limiting (nothing on any endpoint — login with a shared password and no lockout is especially bad), HSTS/CSP headers, audit logging for file mutations and login attempts.
+Other missing pieces: rate limiting (nothing on any endpoint — login with a shared password and no lockout is especially bad), HSTS/CSP headers, and full audit logging for file mutations and login attempts.
 
 ---
 
@@ -24,7 +24,7 @@ There is Postgres and Redis connection pools, semaphores on OpenAI calls, Redis-
 
 **Timeouts** — no timeout on OpenAI calls, DB queries, or Redis ops. If upstream hangs, the worker hangs. Needs `asyncio.wait_for()` wrappers.
 
-**Retries** — no retry on transient failures anywhere. Connection reset from Postgres or a 5xx from OpenAI just fails immediately. Add `tenacity` with backoff + jitter on idempotent operations.
+**Retries** — retrying is ad hoc. There is a fixed-interval retry loop for lock acquisition, but no general retry strategy for transient Postgres/OpenAI/Redis failures. Connection reset from Postgres or a 5xx from OpenAI can still fail immediately. Add `tenacity` with backoff + jitter on idempotent operations.
 
 **Circuit breaker** — if OpenAI is down, we keep sending requests. Should track failure rate and stop calling after a threshold, probe periodically to recover.
 
@@ -34,11 +34,11 @@ There is Postgres and Redis connection pools, semaphores on OpenAI calls, Redis-
 
 **Frontend gaps:**
 - No request dedup — rapid tab switches can fire duplicate fetches. Track in-flight requests by key, return the existing promise.
-- No debouncing
+- Debouncing exists in a couple places, but not as a consistent request-level policy.
 - No React Error Boundaries — a render crash in one component takes down the whole app.
-- No fetch timeouts — `AbortController` should be standard on all API calls.
+- `AbortController` is used for streaming lifecycle, but standard HTTP API calls still have no timeout wrapper.
 
-**DB** — pool sizes are hardcoded (min=2, max=10). Should be configurable. No `statement_timeout` set. At scale, PgBouncer for connection multiplexing.
+**DB** — pool sizing is configurable in the base wrapper, but app wiring still effectively runs on fixed defaults (min=2, max=10) instead of environment-driven tuning. No `statement_timeout` set. At scale, PgBouncer for connection multiplexing.
 
 ---
 
@@ -56,11 +56,11 @@ Right now no Docker, no CI, no versioning.
 
 ## Unified Data Models
 
-Backend has Pydantic models, frontend has TypeScript interfaces, and they're manually kept in sync. When a backend field changes, the frontend doesn't know until something breaks at runtime. The `as T` casts in the frontend API layer mean there's zero validation — a mismatched response just silently propagates.
+Backend has Pydantic models, frontend has TypeScript interfaces, and they're still mostly manually kept in sync. There are a few guardrails in place, but schema drift can still propagate to runtime failures. The `as T` pattern is still common in the frontend API layer, so mismatched responses can silently flow through.
 
-FastAPI generates an OpenAPI spec from Pydantic for free. The move is to export that spec and run `openapi-typescript` to auto-generate the frontend types. One source of truth, types always in sync, run it in CI.
+FastAPI generates an OpenAPI spec from Pydantic. The move is to export that spec and run `openapi-typescript` to auto-generate frontend types. One source of truth, types always in sync, run it in CI.
 
-Some backend models also need tightening — things like `pending_tool_calls: list[dict[str, Any]]` and `data: dict[str, Any]` in `StreamEvent` should be proper typed models so the OpenAPI spec actually describes what gets sent.
+Some backend models also need tightening — things like `pending_tool_calls: list[dict[str, Any]]`, `conversation: list[dict[str, Any]]`, and `data: dict[str, Any]` in `StreamEvent` should be proper typed models so the OpenAPI spec actually describes what gets sent.
 
 ---
 
