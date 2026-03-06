@@ -89,5 +89,12 @@
 @media (max-width: 900px) {
   .actions {
     opacity: 1;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+  
+  .header {
+    flex-wrap: wrap;
+    gap: 4px;
   }
 }

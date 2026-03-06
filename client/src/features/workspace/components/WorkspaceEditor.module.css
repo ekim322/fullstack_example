@@ -14,6 +14,7 @@
   justify-content: center;
   color: var(--text-muted);
   user-select: none;
+  position: relative;
 }
 
 .emptyStateLogo {

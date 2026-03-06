@@ -1,4 +1,5 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { Files } from "lucide-react";
 
 import { WorkspaceEditor } from "./components/WorkspaceEditor";
 import { WorkspaceToolbar } from "./components/WorkspaceToolbar";
@@ -19,6 +20,8 @@ type WorkspacePanelProps = {
 };
 
 export function WorkspacePanel({ userId, authToken, latestToolEvent, openFileRequest }: WorkspacePanelProps) {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(() => window.innerWidth > 900);
+
   const dialogs = useMemo<WorkspaceDialogs>(() => ({
     confirmDiscardDirtyFile: (path) =>
       window.confirm(
@@ -59,28 +62,41 @@ export function WorkspacePanel({ userId, authToken, latestToolEvent, openFileReq
   return (
     <div className={styles.panel}>
       <div className={styles.workspaceBody}>
-        <aside className={styles.sidebar}>
-          <WorkspaceToolbar
-            selectedPath={state.selectedPath}
-            isLoadingTree={state.isLoadingTree}
-            isUploading={state.isUploading}
-            onRefresh={() => void refreshTree()}
-            onCreateFile={() => void createFile()}
-            onCreateFolder={() => void createFolder()}
-            onDeleteSelected={() => void deleteSelected()}
-            onUpload={(files, mode) => void uploadFromPicker(files, mode)}
-          />
-          <div className={styles.treeContainer}>
-            <WorkspaceTree
-              root={state.tree}
-              expandedPaths={state.expandedPaths}
+        <div className={styles.activityBar}>
+          <button
+            type="button"
+            className={`${styles.activityItem} ${isSidebarOpen ? styles.activityItemActive : ""}`}
+            onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            title={isSidebarOpen ? "Hide Explorer" : "Show Explorer"}
+          >
+            <Files size={24} strokeWidth={1.5} />
+          </button>
+        </div>
+
+        {isSidebarOpen && (
+          <aside className={styles.sidebar}>
+            <WorkspaceToolbar
               selectedPath={state.selectedPath}
-              isLoading={state.isLoadingTree}
-              onToggleFolder={toggleExpanded}
-              onSelectNode={(path, nodeType) => void selectNode(path, nodeType)}
+              isLoadingTree={state.isLoadingTree}
+              isUploading={state.isUploading}
+              onRefresh={() => void refreshTree()}
+              onCreateFile={() => void createFile()}
+              onCreateFolder={() => void createFolder()}
+              onDeleteSelected={() => void deleteSelected()}
+              onUpload={(files, mode) => void uploadFromPicker(files, mode)}
             />
-          </div>
-        </aside>
+            <div className={styles.treeContainer}>
+              <WorkspaceTree
+                root={state.tree}
+                expandedPaths={state.expandedPaths}
+                selectedPath={state.selectedPath}
+                isLoading={state.isLoadingTree}
+                onToggleFolder={toggleExpanded}
+                onSelectNode={(path, nodeType) => void selectNode(path, nodeType)}
+              />
+            </div>
+          </aside>
+        )}
 
         <section className={styles.mainArea}>
           <WorkspaceEditor

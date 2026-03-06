@@ -4,6 +4,11 @@ AI chat app with an agentic backend — tool use, multi-turn conversations, resi
 
 **Stack:** React + TypeScript (Vite) / Python + FastAPI / PostgreSQL / Redis / OpenAI API
 
+## Demo
+
+- [Watch demo video](https://www.youtube.com/watch?v=l7xR7rzBvus)
+- [Try it yourself](https://fullstack-example-taupe.vercel.app/)
+
 ```
 ├── client/   # React SPA
 └── server/   # FastAPI backend
@@ -30,6 +35,9 @@ cd server && pip install -e . && uvicorn sequence.main:app --reload
 ### Main Page
 <img src="docs/images/main_page.png" width="700" alt="Main Page" />
 
+### Mobile View
+<img src="docs/images/mobile_view.png" width="300" alt="Main Page" />
+
 ### Ask User Question
 The agent can pause mid-conversation to ask interactive questions with selectable options, descriptions, and free-text input.
 
@@ -39,5 +47,4 @@ The agent can pause mid-conversation to ask interactive questions with selectabl
 Structured plans with numbered steps and sub-tasks, saved to the workspace for reference.
 
 <img src="docs/images/plan_ui.png" width="500" alt="Plan UI" />
-
 
