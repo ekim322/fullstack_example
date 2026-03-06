@@ -1,0 +1,81 @@
+.tabStrip {
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+  overflow-x: auto;
+  min-width: 0;
+}
+
+.tabStrip::-webkit-scrollbar {
+  height: 4px;
+}
+
+.tabStrip::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.tabStrip::-webkit-scrollbar-thumb {
+  background: var(--panel-border);
+  border-radius: 4px;
+}
+
+.tabStrip::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+.tab {
+  display: inline-flex;
+  align-items: center;
+  background: var(--bg-sidebar);
+  border-right: 1px solid var(--panel-border);
+  min-width: 120px;
+  max-width: 200px;
+  height: 35px;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.tabActive {
+  background: var(--bg-main);
+  color: var(--text);
+  border-top: 1px solid var(--accent);
+}
+
+.tabButton {
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: inherit;
+  flex: 1;
+  min-width: 0;
+  padding: 0 10px;
+  text-align: left;
+}
+
+.tabButton span {
+  display: block;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tabClose {
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  margin-right: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tabClose:hover {
+  background: var(--bg-hover);
+  color: var(--text);
+}
+

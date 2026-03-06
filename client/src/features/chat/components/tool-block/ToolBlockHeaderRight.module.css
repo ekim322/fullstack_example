@@ -1,0 +1,86 @@
+.toolHeaderRight {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.statusDone {
+  color: var(--status-success);
+  display: flex;
+  align-items: center;
+  width: 14px;
+  height: 14px;
+}
+
+.statusError {
+  color: var(--danger);
+  display: flex;
+  align-items: center;
+  width: 14px;
+  height: 14px;
+}
+
+.statusRunning {
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  width: 14px;
+  height: 14px;
+}
+
+@keyframes toolBlockSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.spinner {
+  animation: toolBlockSpin 1s linear infinite;
+  width: 14px;
+  height: 14px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation: none;
+  }
+}
+
+.toolDecisionOptions {
+  display: flex;
+  gap: 6px;
+}
+
+.decisionButton {
+  background: var(--bg-input);
+  border: 1px solid var(--panel-border);
+  color: var(--text);
+  border-radius: 4px;
+  padding: 4px 10px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.decisionButton:hover:not(:disabled) {
+  background: var(--bg-hover);
+  border-color: var(--text-muted);
+}
+
+.decisionButtonActive {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--text-accent);
+}
+
+.decisionButtonActiveDecline {
+  background: var(--danger-bg);
+  border-color: var(--danger);
+  color: var(--danger);
+}
+
+.decisionButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

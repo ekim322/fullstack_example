@@ -1,0 +1,311 @@
+.editorRoot {
+  min-height: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-main);
+}
+
+.emptyStateContainer {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+  user-select: none;
+}
+
+.emptyStateLogo {
+  width: 120px;
+  height: 120px;
+  border-radius: 20px;
+  background: var(--bg-sidebar);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24px;
+  box-shadow: var(--shadow-surface);
+}
+
+.logoIcon {
+  font-size: 64px;
+  font-weight: 700;
+  color: var(--panel-border);
+}
+
+.emptyStateText {
+  font-size: 0.9rem;
+  letter-spacing: 0.02em;
+}
+
+.welcomeText {
+  max-width: min(80%, 560px);
+  margin-bottom: 8px;
+  font-size: 1rem;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tabBar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  background: var(--bg-sidebar);
+  height: 35px;
+  min-height: 35px;
+  padding-right: 8px;
+  overflow: hidden;
+}
+
+.tabScrollArea {
+  display: flex;
+  height: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none; /* Firefox */
+}
+
+.tabScrollArea::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
+}
+
+.tab {
+  display: flex;
+  align-items: center;
+  height: 35px;
+  padding-right: 12px;
+  background: var(--bg-sidebar);
+  border-right: 1px solid var(--panel-border);
+  color: var(--text-muted);
+  min-width: 120px;
+  max-width: 200px;
+  gap: 8px;
+  user-select: none;
+}
+
+.tabActive {
+  background: var(--bg-main);
+  color: var(--text);
+  border-top: 1px solid var(--accent);
+}
+
+.tab:hover:not(.tabActive) {
+  background: var(--bg-hover);
+}
+
+.tabTrigger {
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: inherit;
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  padding: 0 0 0 12px;
+  text-align: left;
+}
+
+.tabName {
+  font-size: 0.85rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+}
+
+.tabActionArea {
+  position: relative;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.dirtyDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--text);
+  display: none;
+}
+
+.dirtyDot.isDirty {
+  display: block;
+}
+
+.tab:hover .dirtyDot {
+  display: none;
+}
+
+.tabClose {
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  cursor: pointer;
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0;
+}
+
+.tabClose:hover {
+  background: var(--bg-hover);
+  color: var(--text);
+}
+
+.closeActive {
+  opacity: 1;
+}
+
+.closeWhenDirty {
+  opacity: 0 !important;
+}
+
+.tab:hover .tabClose {
+  opacity: 1 !important;
+}
+
+.tabBarActions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 100%;
+}
+
+.actionButton {
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  border-radius: 4px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.actionButton:hover:not(:disabled) {
+  background: var(--bg-hover);
+  color: var(--text);
+}
+
+.actionButton:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.breadcrumb {
+  padding: 4px 12px;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--panel-border);
+  font-family: ui-monospace, SFMono-Regular, SF Mono, Menlo, Consolas, monospace;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.conflictBanner {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  font-size: 0.8rem;
+}
+
+.conflictBanner {
+  background: color-mix(in srgb, var(--danger) 20%, var(--bg-main));
+  border-bottom: 1px solid color-mix(in srgb, var(--danger) 40%, var(--panel-border));
+  color: var(--danger-text);
+}
+
+.guardMessage {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.guardIcon {
+  flex-shrink: 0;
+}
+
+.guardActions {
+  display: flex;
+  gap: 6px;
+}
+
+.secondaryBtn, .dangerBtn {
+  border: 1px solid transparent;
+  border-radius: 4px;
+  padding: 4px 10px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.secondaryBtn {
+  background: var(--bg-panel);
+  border-color: var(--panel-border);
+  color: var(--text);
+}
+
+.secondaryBtn:hover {
+  background: var(--bg-hover);
+}
+
+.dangerBtn {
+  background: transparent;
+  border-color: color-mix(in srgb, var(--danger) 50%, transparent);
+  color: var(--danger-text);
+}
+
+.dangerBtn:hover {
+  background: var(--danger);
+  color: var(--text-inverse);
+  border-color: var(--danger);
+}
+
+.editorContainer {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+}
+
+.editor {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: transparent;
+}
+
+.editor:focus-visible {
+  outline: none;
+}
+
+@media (max-width: 600px) {
+  .conflictBanner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

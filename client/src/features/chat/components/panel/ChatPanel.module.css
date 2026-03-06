@@ -1,0 +1,33 @@
+.panel {
+  height: 100%;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr);
+  background: var(--bg-main);
+  min-width: 0;
+  width: 100%;
+}
+
+.tabBar {
+  display: flex;
+  align-items: stretch;
+  background: var(--bg-sidebar);
+  min-width: 0;
+  width: 100%;
+}
+
+.tabPanel {
+  min-height: 0;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto auto;
+}
+
+.error {
+  margin: 10px;
+  padding: 8px 12px;
+  background: var(--danger-bg);
+  color: var(--danger);
+  border-left: 3px solid var(--danger);
+  font-size: 0.9rem;
+}
+

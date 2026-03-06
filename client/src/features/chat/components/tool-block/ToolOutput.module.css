@@ -1,0 +1,16 @@
+.toolCodePre {
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.toolCode {
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 0.85rem;
+  color: var(--code-text);
+  line-height: 1.4;
+}
+
+.toolCodeError {
+  color: var(--danger);
+}

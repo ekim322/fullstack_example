@@ -1,0 +1,117 @@
+.controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 8px;
+  border-top: 1px solid var(--panel-border);
+}
+
+.leftControls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.field {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.select {
+  border: 1px solid transparent;
+  border-radius: 4px;
+  height: 24px;
+  padding: 0 4px;
+  background: transparent;
+  color: var(--text);
+  font-size: 0.8rem;
+  outline: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.select:hover {
+  background: var(--bg-hover);
+}
+
+.select:focus {
+  background: var(--bg-input);
+}
+
+.checkboxField {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.checkboxField input {
+  margin: 0;
+  accent-color: var(--accent);
+  cursor: pointer;
+}
+
+.sendButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 28px;
+  width: 28px;
+  border: 1px solid var(--panel-border);
+  border-radius: 4px;
+  background: var(--bg-panel);
+  color: var(--text);
+  padding: 0;
+  transition: all 0.2s;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.sendButton svg {
+  width: 14px;
+  height: 14px;
+}
+
+.sendButton:hover:not(:disabled) {
+  background: var(--bg-hover);
+}
+
+.sendButton:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  background: var(--bg-panel);
+  color: var(--text-muted);
+}
+
+.stopButton {
+  background: var(--danger);
+  color: var(--text-inverse);
+}
+
+.stopButton:hover:not(:disabled) {
+  background: var(--danger-hover);
+  color: var(--text-inverse);
+}
+
+@keyframes spinRing {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.stopSpinner {
+  animation: spinRing 1.2s linear infinite;
+  transform-origin: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .stopSpinner {
+    animation: none;
+  }
+}

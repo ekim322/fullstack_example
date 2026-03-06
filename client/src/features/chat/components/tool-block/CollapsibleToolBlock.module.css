@@ -1,0 +1,92 @@
+.messageBubble {
+  max-width: 100%;
+  flex-shrink: 0;
+}
+
+.toolBlock {
+  align-self: stretch;
+  background: transparent;
+  border: 1px solid var(--panel-border);
+  border-radius: 6px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.toolBlock + .toolBlock {
+  margin-top: -16px;
+}
+
+.toolHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--bg-panel);
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.2s;
+}
+
+.toolHeader:hover {
+  background: var(--bg-hover);
+}
+
+.toolHeaderExpanded {
+  border-bottom: 1px solid var(--panel-border);
+}
+
+.caret {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  color: var(--text-muted);
+  transition: transform 0.2s;
+}
+
+.caretExpanded {
+  transform: rotate(90deg);
+}
+
+.toolIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  color: var(--tool-icon-accent);
+}
+
+.toolTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.toolTitleText {
+  font-size: 0.75rem;
+  color: var(--text);
+  font-family: Consolas, "Courier New", monospace;
+  font-weight: 600;
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.toolTitleAction {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.toolBody {
+  background: var(--bg-main); /* match IDE background */
+  display: flex;
+  flex-direction: column;
+}

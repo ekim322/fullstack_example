@@ -1,0 +1,50 @@
+.toolCodePre {
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.toolCode {
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 0.85rem;
+  color: var(--code-text);
+  line-height: 1.4;
+}
+
+.argsTable {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.noParameters {
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  color: var(--text-muted);
+}
+
+.argRow {
+  display: flex;
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+.argKey {
+  color: var(--code-key);
+  margin-right: 6px;
+  flex-shrink: 0;
+}
+
+.argValueString {
+  color: var(--code-string);
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.argValueOther {
+  color: var(--code-literal);
+  white-space: pre-wrap;
+  word-break: break-all;
+}

@@ -1,0 +1,6 @@
+.env
+*.ipynb
+vector_store/
+
+__pycache__/
+*.egg-info/

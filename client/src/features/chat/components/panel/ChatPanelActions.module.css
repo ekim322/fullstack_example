@@ -1,0 +1,125 @@
+.tabActions {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 8px;
+}
+
+.iconButton {
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  border-radius: 4px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.iconButton:hover {
+  background: var(--bg-hover);
+  color: var(--text);
+}
+
+.iconButton svg {
+  width: 16px;
+  height: 16px;
+}
+
+.plusButton {
+  line-height: 1;
+  transform: translateY(-1.8px);
+}
+
+.historyPopover {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  width: min(300px, 80vw);
+  background: var(--bg-panel);
+  border: 1px solid var(--panel-border);
+  box-shadow: var(--shadow-overlay);
+  z-index: 10;
+}
+
+.menuPopover {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  min-width: 140px;
+  background: var(--bg-panel);
+  border: 1px solid var(--panel-border);
+  box-shadow: var(--shadow-overlay);
+  z-index: 10;
+  padding: 4px;
+}
+
+.menuItem {
+  width: 100%;
+  border: none;
+  background: transparent;
+  color: var(--text);
+  text-align: left;
+  border-radius: 4px;
+  font-size: 0.82rem;
+  padding: 7px 9px;
+}
+
+.menuItem:hover {
+  background: var(--bg-hover);
+}
+
+.historyHeader {
+  padding: 10px;
+  border-bottom: 1px solid var(--panel-border);
+}
+
+.historyHeader h3 {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.historyList {
+  margin: 0;
+  padding: 4px 0;
+  list-style: none;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.historyItem {
+  width: 100%;
+  text-align: left;
+  border: none;
+  background: transparent;
+  padding: 6px 10px;
+  display: grid;
+  gap: 4px;
+}
+
+.historyItem:hover {
+  background: var(--bg-hover);
+}
+
+.historyItemActive {
+  background: var(--bg-active);
+}
+
+.historyItemLabel {
+  font-size: 0.85rem;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.historyItemTime {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}

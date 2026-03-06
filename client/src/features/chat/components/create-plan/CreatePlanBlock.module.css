@@ -1,0 +1,166 @@
+.messageBubble {
+  max-width: 100%;
+  flex-shrink: 0;
+}
+
+.toolBlock {
+  align-self: stretch;
+  background: transparent;
+  border: 1px solid var(--panel-border);
+  border-radius: 6px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.toolBlock + .toolBlock {
+  margin-top: -16px;
+}
+
+.caret {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  color: var(--text-muted);
+  transition: transform 0.2s;
+}
+
+.caretExpanded {
+  transform: rotate(90deg);
+}
+
+.planBlock {
+  padding: 8px 12px;
+  background: var(--bg-panel);
+  gap: 8px;
+}
+
+.planHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  user-select: none;
+  gap: 8px;
+}
+
+.planHeaderExpanded {
+  margin-bottom: 4px;
+}
+
+.planCaret {
+  flex-shrink: 0;
+}
+
+.planTitle {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.planIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  color: var(--tool-icon-accent);
+}
+
+.planTitleText {
+  margin: 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text);
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.planTitleAction {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.planContent {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 8px 0;
+}
+
+.savedPathText {
+  margin: 0;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
+.planStep {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.planStepHeader {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.planStepNumber {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 0.7rem;
+  font-weight: 700;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.planStepDescription {
+  margin: 0;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text);
+  line-height: 1.4;
+}
+
+.planSubSteps {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-left: 28px;
+  margin-top: 2px;
+}
+
+.planSubStep {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.planSubStepBullet {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+
+.planSubStepText {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}

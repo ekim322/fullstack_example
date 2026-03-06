@@ -1,0 +1,72 @@
+.shell {
+  display: flex;
+  height: 100%;
+  min-height: 100dvh;
+  width: 100%;
+  background: var(--bg-main);
+  overflow: hidden;
+}
+
+.resizing {
+  user-select: none;
+  cursor: col-resize;
+}
+
+.pane {
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-main);
+}
+
+.workspacePane {
+  flex: 1;
+  border-right: none;
+}
+
+.resizer {
+  appearance: none;
+  border: none;
+  padding: 0;
+  width: 4px;
+  background: var(--panel-border);
+  cursor: col-resize;
+  transition: background 0.2s ease;
+  z-index: 10;
+}
+
+.resizer:hover, .resizer:active {
+  background: var(--text-muted);
+}
+
+.resizer:focus-visible {
+  outline: 2px solid var(--focus-border);
+  outline-offset: 0;
+}
+
+.chatPane {
+  width: var(--chat-width);
+  flex: none;
+  min-width: 250px; /* prevent it from getting too small and breaking components */
+}
+
+@media (max-width: 1100px) {
+  .shell {
+    flex-direction: column;
+  }
+
+  .workspacePane {
+    flex: none;
+    height: 40vh;
+    border-right: none;
+    border-bottom: 1px solid var(--panel-border);
+  }
+
+  .resizer {
+    display: none;
+  }
+
+  .chatPane {
+    width: 100%;
+    flex: 1;
+  }
+}

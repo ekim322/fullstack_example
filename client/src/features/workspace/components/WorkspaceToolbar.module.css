@@ -1,0 +1,93 @@
+.toolbar {
+  display: flex;
+  flex-direction: column;
+  padding: 8px 12px;
+  background: var(--bg-sidebar);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.title {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.toolbar:hover .actions {
+  opacity: 1;
+}
+
+.toolbar:focus-within .actions {
+  opacity: 1;
+}
+
+.iconButton {
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: var(--text-muted);
+  border-radius: 4px;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+}
+
+.iconButton:hover:not(:disabled) {
+  background: var(--bg-hover);
+  color: var(--text);
+}
+
+.iconButton:focus-visible {
+  outline: 1px solid var(--focus-border);
+  outline-offset: 1px;
+}
+
+.iconButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.dangerHover:hover:not(:disabled) {
+  color: var(--danger);
+  background: var(--danger-bg);
+}
+
+.spinning {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.hiddenInput {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .actions {
+    opacity: 1;
+  }
+}

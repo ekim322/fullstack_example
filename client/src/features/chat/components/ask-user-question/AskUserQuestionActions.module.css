@@ -1,0 +1,40 @@
+.askQuestionActions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 2px;
+}
+
+.askQuestionSubmit {
+  border: 1px solid var(--accent);
+  background: var(--accent);
+  color: #ffffff;
+  border-radius: 4px;
+  padding: 4px 10px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.askQuestionSubmit:hover:not(:disabled) {
+  background: var(--accent-hover);
+}
+
+.askQuestionSubmit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.askQuestionSubmit.askQuestionSubmitDone {
+  background: transparent;
+  border-color: var(--status-success);
+  color: var(--status-success);
+  opacity: 1;
+}
+
+.askQuestionHint {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}

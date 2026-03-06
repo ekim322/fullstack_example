@@ -1,0 +1,105 @@
+.messages {
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.messageBubble {
+  max-width: 100%;
+  min-width: 0;
+  flex-shrink: 0;
+}
+
+.messageRole {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.assistantMessage {
+  align-self: stretch;
+  background: transparent;
+  border: none;
+  padding: 0;
+  border-radius: 0;
+}
+
+.userMessage {
+  align-self: flex-end;
+  background: var(--bg-panel);
+  border: 1px solid var(--panel-border);
+  padding: 12px 16px;
+  border-radius: 12px;
+  max-width: 80%;
+}
+
+.messageText {
+  margin: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  font-size: 0.95rem;
+  color: var(--text);
+  line-height: 1.6;
+}
+
+.markdownContent {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.markdownParagraph {
+  margin: 0 0 1em 0;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.markdownParagraph:last-child {
+  margin-bottom: 0;
+}
+
+.markdownPre {
+  background: var(--bg-main);
+  padding: 12px;
+  border-radius: 6px;
+  overflow-x: auto;
+  max-width: 100%;
+  box-sizing: border-box;
+  border: 1px solid var(--panel-border);
+}
+
+.markdownCode {
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 0.85em;
+  background: var(--bg-panel);
+  padding: 2px 4px;
+  border-radius: 4px;
+}
+
+.markdownPre .markdownCode {
+  background: transparent;
+  padding: 0;
+}
+
+.messageRoleUser {
+  color: var(--text-accent);
+}
+
+.messageRoleAssistant {
+  color: var(--accent);
+}
+
+.thinkingText {
+  color: var(--text-muted);
+  font-style: italic;
+  font-size: 0.9rem;
+  margin: 0;
+}

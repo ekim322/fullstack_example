@@ -1,0 +1,52 @@
+.composerSection {
+  padding: 12px 20px;
+  background: var(--bg-main);
+  display: flex;
+  flex-direction: column;
+}
+
+.inputContainer {
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-input);
+  border: 1px solid var(--panel-border);
+  border-radius: 6px;
+  padding: 8px 12px;
+  transition: border-color 0.2s;
+}
+
+.inputContainer:focus-within {
+  /* removed border-color change */
+}
+
+.inputLabel {
+  display: none;
+}
+
+.input {
+  width: 100%;
+  min-height: 60px;
+  max-height: 400px;
+  resize: none;
+  overflow-y: auto;
+  border: none;
+  background: transparent;
+  color: var(--text);
+  font-family: var(--font-family, inherit);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  padding: 0;
+  margin-bottom: 8px;
+}
+
+.input:focus {
+  outline: none;
+}
+
+.input::placeholder {
+  color: var(--text-muted);
+}
+
+.input:disabled {
+  opacity: 0.6;
+}

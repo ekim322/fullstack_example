@@ -1,0 +1,58 @@
+.panel {
+  border-top: 1px solid var(--panel-border);
+  background: var(--bg-panel);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 12px;
+  border-bottom: 1px solid var(--panel-border);
+  background: var(--bg-sidebar);
+}
+
+.header h3 {
+  margin: 0;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+.logList {
+  max-height: 200px;
+  overflow-y: auto;
+  padding: 8px 12px;
+  display: grid;
+  gap: 6px;
+}
+
+.emptyState {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  font-style: italic;
+}
+
+.logItem {
+  font-family: monospace;
+  font-size: 0.85rem;
+}
+
+.logMeta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-muted);
+  margin-bottom: 2px;
+}
+
+.logItem p {
+  margin: 0;
+  white-space: pre-wrap;
+  color: var(--text);
+  padding-left: 12px;
+  border-left: 2px solid var(--panel-border);
+}

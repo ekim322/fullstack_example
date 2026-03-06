@@ -1,0 +1,31 @@
+.toolDataSection {
+  display: flex;
+  flex-direction: column;
+  border-bottom: 1px dashed var(--panel-border);
+}
+
+.toolDataSection:last-child {
+  border-bottom: none;
+}
+
+.toolDataHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px 0;
+}
+
+.toolDataLabel {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.toolDataContent {
+  padding: 6px 12px 12px;
+  max-height: 250px;
+  overflow-y: auto;
+  overflow-x: auto;
+}
